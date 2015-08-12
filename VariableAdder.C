@@ -1,6 +1,6 @@
 //////////////////////////////
 // The Hmumu Variable adder //
-/////////////////////////////
+//////////////////////////////
 // The purpose of this program is to calculate
 // additional variables needed for the Hmumu 
 // analysis. This program uses the stage 1 
@@ -30,13 +30,11 @@
 #include "src/DataFormats.h"
 #include "src/helpers.h"
 #include "src/LumiReweightingStandAlone.h"
-#include "src/SmearingTool.h"
-#include "src/SmearingTool2011.h"
 #include "Math/Functor.h"
 #include "Math/GSLMinimizer1D.h"
 
 //Begin main program
-void VariableAdder (TString inputFileName,TString outputFileName, bool isData, bool isSignaljjjjjjjjjjjjjjk)
+void VariableAdder (TString inputFileName,TString outputFileName, bool isData, bool isSignal)
 {
   using namespace std;
 
@@ -131,12 +129,14 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 
   // I may add muon selection here
 
-  /////////////////////////
-  // Smearing
-  SmearingTool *smearPT = new SmearingTool();
+  // I may add smearing here
 
   ///////////////////////////////
   ///////////////////////////////
+  // Output file
+  TFile* outFile = new TFile(outputFileName,"RECREATE");
+  TTree* outTree = tree->CloneTree();
+
   ///////////////////////////////
   // Event Loop
     
@@ -149,38 +149,9 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
       if (reco1.pt < 0. || reco2.pt < 0.)
           continue;
     
-      /////////////////////////////////////////////////
-      // Muon Resolution Smearing to match MuScleFit
+      //
+      // I may add Muon Resolution Smearing to match MuScleFit
         
-      if(isSignal) // smear only signal because it has muons from higgs 
-      {
-          if(reco1GenPostFSR.pt<0.)
-              cout << "Muon 1 Post FSR not valid!\n";
-          if(reco2GenPostFSR.pt<0.)
-              cout << "Muon 2 Post FSR not valid!\n";
-          float ptReco1 = -1.;
-          float ptReco2 = -1.;
-          ptReco1 = smearPT -> PTsmear(reco1GenPostFSR.pt, reco1GenPostFSR.eta, reco1GenPostFSR.charge, reco1.pt, ISMEAR);
-          ptReco2 = smearPT -> PTsmear(reco2GenPostFSR.pt, reco2GenPostFSR.eta, reco2GenPostFSR.charge, reco2.pt, ISMEAR);
-          
-	  LorentzVector reco1Vec;                                        
-          TLorentzVector reco2Vec;
-          reco1Vec.SetPtEtaPhiM(ptReco1,reco1.eta,reco1.phi,MASS_MUON);
-          reco2Vec.SetPtEtaPhiM(ptReco2,reco2.eta,reco2.phi,MASS_MUON);
-          LorentzVector diMuonVec = reco1Vec + reco2Vec;
-          
-          reco1.pt = ptReco1;
-          reco2.pt = ptReco2;
-          recoCandMass = diMuonVec.M();
-          recoCandPt = diMuonVec.Pt();
-          recoCandY = diMuonVec.Rapidity();
-          recoCandPhi = diMuonVec.Phi();
-          
-          reco1Vec.SetPtEtaPhiM(ptReco1,reco1.eta,reco1.phi,MASS_MUON);
-          reco2Vec.SetPtEtaPhiM(ptReco2,reco2.eta,reco2.phi,MASS_MUON);
-          diMuonVec = reco1Vec + reco2Vec;
-       }
-
        // I may add muon cuts
 
        // Order muons by pt
@@ -203,14 +174,31 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
         TLorentzVector tmpGenJetVec;
         tmpGenJetVec.SetPtEtaPhiM(rawJets.genPt[iJet],rawJets.genEta[iJet],rawJets.genPhi[iJet],rawJets.genMass[iJet]);
         genJets.push_back(tmpGenJetVec);
-      }
+       }
 
-      ///////////////
-      // Fill Histograms
-
-     
+       ///////////////
+       // Calculate new variables
+       int njetsel = 0;
+       int index1 = 0;
+       int index2 = 0;
+       // Find the two highest Pt jets
+       for (unsigned iJet=0; iJet < jets.size(); iJet++){
+	  njetsel++;
+	  if (njetsel == 1){
+		index1 = iJet;
+	  } 
+	  else if (njetsel == 2){
+		index2 = iJet;
+	  }  
+       }
+       // Create diJet vec
+       if(jets.size() >= 2){
+	  TLorentzVector diJet = jets[index1] + jets[index2];
+       }
+       // Create diJetMass Variable and Branch
+       float diJetMass = diJet.M();
+       outTree->Branch("diJetMass", &diJetMass, "diJetMass/F");
   }
-  TFile* outFile = new TFile(outputFileName,"RECREATE");
   outFile->cd();
 
 }
