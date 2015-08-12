@@ -61,14 +61,11 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   
   // Create variables for dimuon mass, pt, rapidity, and phi
   float recoCandMass, recoCandPt, recoCandY, recoCandPhi;
-  float recoCandMassRes, recoCandMassResCov;
   
   tree->SetBranchAddress("recoCandMass",       &recoCandMass);
   tree->SetBranchAddress("recoCandPt",         &recoCandPt);
   tree->SetBranchAddress("recoCandY",          &recoCandY);
   tree->SetBranchAddress("recoCandPhi",        &recoCandPhi);
-  tree->SetBranchAddress("recoCandMassRes",    &recoCandMassRes);
-  tree->SetBranchAddress("recoCandMassResCov", &recoCandMassResCov);
 
   // MC truth info
   float trueMass=-99999.0;
@@ -95,47 +92,21 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   _PFJetInfo rawJets;
   tree->SetBranchAddress("pfJets",&rawJets);
   
-  float puJetFullDisc[10];
-  float puJetSimpleDisc[10];
-  float puJetCutDisc[10];
-  
-  tree->SetBranchAddress("puJetFullDisc",&puJetFullDisc);
-  tree->SetBranchAddress("puJetSimpleDisc",&puJetSimpleDisc);
-  tree->SetBranchAddress("puJetCutDisc",&puJetCutDisc);
-  
-  float puJetFullId[10];
-  float puJetSimpleId[10];
-  float puJetCutId[10];
-  
-  tree->SetBranchAddress("puJetFullId",&puJetFullId);
-  tree->SetBranchAddress("puJetSimpleId",&puJetSimpleId);
-  tree->SetBranchAddress("puJetCutId",&puJetCutId);
-  
-  int nPU=0;
-  if (!isData)
-    {
-      tree->SetBranchAddress("nPU",&nPU);
-    }
-  _VertexInfo vertexInfo;
-  tree->SetBranchAddress("vertexInfo",&vertexInfo);
-  _EventInfo eventInfo;
-  tree->SetBranchAddress("eventInfo",&eventInfo);
-
-  // Be careful, the met has not been well validated
-  _MetInfo met;
-  tree->SetBranchAddress("met",&met);
-
-  // I may add pile up reweighting here
-
-  // I may add muon selection here
-
-  // I may add smearing here
-
   ///////////////////////////////
   ///////////////////////////////
   // Output file
   TFile* outFile = new TFile(outputFileName,"RECREATE");
-  TTree* outTree = tree->CloneTree();
+  outFile->cd();
+  TTree* outTree = new TTree("outTree","outTree");
+  outTree = tree->CloneTree();
+  float diJetMass;
+  TBranch *diJetMassBranch = outTree->Branch("diJetMass", &diJetMass, "diJetMass/F");
+
+  // number of events
+  unsigned nEvents = tree->GetEntries();
+  unsigned reportEach = 100000;
+  if (nEvents/100000 > reportEach)
+	reportEach = nEvents/100000;
 
   ///////////////////////////////
   // Event Loop
@@ -178,6 +149,9 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 
        ///////////////
        // Calculate new variables
+
+       //cout << "number of jets: " << jets.size() << endl;
+
        int njetsel = 0;
        int index1 = 0;
        int index2 = 0;
@@ -191,16 +165,18 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 		index2 = iJet;
 	  }  
        }
-       // Create diJet vec
+       // Create diJetMass Variable and Branch
+       diJetMass = 0;
        if(jets.size() >= 2){
 	  TLorentzVector diJet = jets[index1] + jets[index2];
+          //cout << "DiJetMass: " << diJet.M() << endl;     
+          diJetMass = diJet.M();
+          //cout << "DiJetMass float: " << diJetMass << endl;
        }
-       // Create diJetMass Variable and Branch
-       float diJetMass = diJet.M();
-       outTree->Branch("diJetMass", &diJetMass, "diJetMass/F");
+       diJetMassBranch->Fill();
   }
-  outFile->cd();
-
+  outTree->Write();
+  outFile->Close();
 }
 
 
