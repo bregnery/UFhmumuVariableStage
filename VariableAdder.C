@@ -99,10 +99,12 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   
   // Add a branch for diJet TLorentzVector
   _diJetInfo diJet;
-  TBranch *diJetBranch = outTree->Branch("diJet", &diJet, "mass/F:phi/F:eta/F:et/F:Et/F");
+  TBranch *diJetBranch = outTree->Branch("diJet", &diJet, "mass/F:phi/F:eta/F:pt/F:Et/F");
 
   // Add a branch for the transverse angle
   // between the dimuon pair and the dijet pair
+  float VHphi;
+  TBranch *VHphiBranch = outTree->Branch("VHphi", &VHphi, "VHphi/F");
 
   // number of events
   unsigned nEvents = tree->GetEntries();
@@ -162,7 +164,8 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 		index2 = iJet;
 	  }  
        }
-       // fill the diJetMass Branch
+       // fill the diJetMass Branch and VHphi Branch
+       VHphi = 0;
        diJet.mass = 0;
        diJet.phi = 0;
        diJet.eta = 0;
@@ -175,9 +178,11 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
           diJet.phi = diJetIn.Phi();
           diJet.eta = diJetIn.Eta();
           diJet.pt = diJetIn.Pt();
-          diJet.Et = diJetIn.Et();     
+          diJet.Et = diJetIn.Et();
+          VHphi = TMath::Abs(diJet.phi - recoCandPhi);     
        }
        diJetBranch->Fill();
+       VHphiBranch->Fill();
   }
   outTree->Write();
   outFile->Close();
