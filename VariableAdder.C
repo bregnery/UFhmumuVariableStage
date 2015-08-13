@@ -106,6 +106,10 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   float VHphi;
   TBranch *VHphiBranch = outTree->Branch("VHphi", &VHphi, "VHphi/F");
 
+  // Add a branch for the phiStar variable
+  float phiStar;
+  TBranch *phiStarBranch = outTree->Branch("phiStar", &phiStar, "phiStar/F");
+
   // number of events
   unsigned nEvents = tree->GetEntries();
   unsigned reportEach = 100000;
@@ -164,7 +168,7 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 		index2 = iJet;
 	  }  
        }
-       // fill the diJetMass Branch and VHphi Branch
+       // calculate and fill the diJetMass and VHphi
        VHphi = 0;
        diJet.mass = 0;
        diJet.phi = 0;
@@ -183,6 +187,20 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
        }
        diJetBranch->Fill();
        VHphiBranch->Fill();
+       // calculate and fill the phiStar variable
+       phiStar = 0;
+       float muonDelPhi = TMath::Abs(reco1.phi - reco2.phi);
+       if(muonDelPhi >= TMath::Pi()){
+	  muonDelPhi = 2*TMath::Pi() - muonDelPhi;
+       }
+       cout << "muonDelPhi: " << muonDelPhi << endl;
+       float phiACOP = TMath::Pi() - muonDelPhi;
+       cout << "phiACOP: " << phiACOP << endl;
+       float thetaStarEta = TMath::ACos(TMath::TanH((reco1.eta - reco2.eta)/2));
+       cout << "thetaStarEta: " << thetaStarEta << endl;
+       phiStar = TMath::Tan(phiACOP/2)*TMath::Sin(thetaStarEta);
+       cout << "phiStar: " << phiStar << endl;
+       phiStarBranch->Fill();
   }
   outTree->Write();
   outFile->Close();
