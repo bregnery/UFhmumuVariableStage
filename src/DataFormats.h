@@ -115,6 +115,14 @@ typedef struct {
   float sumEt;
 } _MetInfo;
 
+// diJet
+typedef struct {
+  float mass;
+  float phi;
+  float eta;
+  float pt;
+  float Et;
+} _diJetInfo;
 
 // pf Jets
 typedef struct {

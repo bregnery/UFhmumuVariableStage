@@ -86,9 +86,6 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
       tree->SetBranchAddress("genM2HpostFSR", &reco2GenPostFSR);
   
   // the jet collection
-  // these 'rawJets' already have Loose Jet ID applied, and JES corrections
-  // and are cross-cleaned of tight muons
-  // later, jets will have JER corrections, PUID, and basic cuts applied
   _PFJetInfo rawJets;
   tree->SetBranchAddress("pfJets",&rawJets);
   
@@ -99,8 +96,13 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   outFile->cd();
   TTree* outTree = new TTree("outTree","outTree");
   outTree = tree->CloneTree();
-  float diJetMass;
-  TBranch *diJetMassBranch = outTree->Branch("diJetMass", &diJetMass, "diJetMass/F");
+  
+  // Add a branch for diJet TLorentzVector
+  _diJetInfo diJet;
+  TBranch *diJetBranch = outTree->Branch("diJet", &diJet, "mass/F:phi/F:eta/F:et/F:Et/F");
+
+  // Add a branch for the transverse angle
+  // between the dimuon pair and the dijet pair
 
   // number of events
   unsigned nEvents = tree->GetEntries();
@@ -120,11 +122,6 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
       if (reco1.pt < 0. || reco2.pt < 0.)
           continue;
     
-      //
-      // I may add Muon Resolution Smearing to match MuScleFit
-        
-       // I may add muon cuts
-
        // Order muons by pt
        if (reco1.pt < reco2.pt)
        {
@@ -165,15 +162,22 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
 		index2 = iJet;
 	  }  
        }
-       // Create diJetMass Variable and Branch
-       diJetMass = 0;
+       // fill the diJetMass Branch
+       diJet.mass = 0;
+       diJet.phi = 0;
+       diJet.eta = 0;
+       diJet.pt = 0;
+       diJet.Et = 0;
        if(jets.size() >= 2){
-	  TLorentzVector diJet = jets[index1] + jets[index2];
-          //cout << "DiJetMass: " << diJet.M() << endl;     
-          diJetMass = diJet.M();
-          //cout << "DiJetMass float: " << diJetMass << endl;
+	  TLorentzVector diJetIn = jets[index1] + jets[index2];
+          //cout << "DiJetMass: " << diJet.M() << endl;
+          diJet.mass = diJetIn.M();
+          diJet.phi = diJetIn.Phi();
+          diJet.eta = diJetIn.Eta();
+          diJet.pt = diJetIn.Pt();
+          diJet.Et = diJetIn.Et();     
        }
-       diJetMassBranch->Fill();
+       diJetBranch->Fill();
   }
   outTree->Write();
   outFile->Close();
