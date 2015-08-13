@@ -190,16 +190,16 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
        // calculate and fill the phiStar variable
        phiStar = 0;
        float muonDelPhi = TMath::Abs(reco1.phi - reco2.phi);
-       if(muonDelPhi >= TMath::Pi()){
+       if(muonDelPhi > TMath::Pi()){
 	  muonDelPhi = 2*TMath::Pi() - muonDelPhi;
        }
-       cout << "muonDelPhi: " << muonDelPhi << endl;
+       //cout << "muonDelPhi: " << muonDelPhi << endl;
        float phiACOP = TMath::Pi() - muonDelPhi;
-       cout << "phiACOP: " << phiACOP << endl;
+       //cout << "phiACOP: " << phiACOP << endl;
        float thetaStarEta = TMath::ACos(TMath::TanH((reco1.eta - reco2.eta)/2));
-       cout << "thetaStarEta: " << thetaStarEta << endl;
+       //cout << "thetaStarEta: " << thetaStarEta << endl;
        phiStar = TMath::Tan(phiACOP/2)*TMath::Sin(thetaStarEta);
-       cout << "phiStar: " << phiStar << endl;
+       //cout << "phiStar: " << phiStar << endl;
        phiStarBranch->Fill();
   }
   outTree->Write();
