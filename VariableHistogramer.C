@@ -34,30 +34,30 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   setStyle();
   
   // Plots Mass of the Dimuons
-  TH1F* dimuonMassHist = new TH1F("dimuonMass","",50,110,160);
+  TH1F* dimuonMassHist = new TH1F("dimuonMassHist","",50,110,160);
   setHistTitles(dimuonMassHist,"M(#mu#mu) [GeV/c^{2}]","Events");
   dimuonMassHist->Sumw2();
   
   // Plots invariant Dijet Mass
-  TH1F* diJetMassHist = new TH1F("diJet Mass","",50,0,200);
+  TH1F* diJetMassHist = new TH1F("diJetMassHist","",50,0,200);
   setHistTitles(diJetMassHist,"M(2Jet) [GeV/c^{2}]","Events");
   diJetMassHist->SetStats(1);
   diJetMassHist->Sumw2();
 
   // Plots the diJet Eta
-  TH1F* diJetEtaHist = new TH1F("diJet #eta","",50,-6,6);
+  TH1F* diJetEtaHist = new TH1F("diJetEtaHist","",50,-6,6);
   setHistTitles(diJetEtaHist,"#eta","Events");
   diJetEtaHist->SetStats(1);
   diJetEtaHist->Sumw2();
 
   // Plots the angle between V and H
-  TH1F* VHphiHist = new TH1F("VH #phi","",50,0,7);
+  TH1F* VHphiHist = new TH1F("VHphiHist","",50,0,7);
   setHistTitles(VHphiHist,"#phi","Events");
   VHphiHist->SetStats(1);
   VHphiHist->Sumw2();
 
   // Plots the Phi star variable
-  TH1F* phiStarHist = new TH1F("#phi *","",50,0,1);
+  TH1F* phiStarHist = new TH1F("phiStarHist","",50,0,1);
   setHistTitles(phiStarHist,"#phi *","Events");
   phiStarHist->SetStats(1);
   phiStarHist->Sumw2();
@@ -175,4 +175,5 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   diJetMassHist->Write();
   VHphiHist->Write();
   phiStarHist->Write();
+  outFile->Close();
 }
