@@ -34,6 +34,7 @@ This will create new files, *_13TeV_stageVar.root, that contain trees with the n
     root -b -q -x runHist.C
     
 This will create new files, *_13TeV_Hist.root, that contain trees with the histograms. 
+
 In order to display the histograms create a plot*.py script (for example see plotDiJetMass.py) and execute the script using python:
 
     python plot*.py
