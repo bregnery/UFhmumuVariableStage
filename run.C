@@ -8,7 +8,7 @@
   //VariableAdder("/scratch/osg/bregnery/stage1/CMSSW_7_4_2/src/UserArea/UFDiMuonsAnalyzer/test/ttHmumu_13TeV_stage1.root","ttHmumu_13TeV_stageVar.root",false,true);
 
   //VariableAdder("/scratch/osg/bregnery/stage1/CMSSW_7_4_2/src/UserArea/UFDiMuonsAnalyzer/test/stage_1_dy_jetsToLL_asympt50_ALL.root","DY_13TeV_stageVar.root",false,false);
-  //VariableAdder("/scratch/osg/bregnery/stage1/CMSSW_7_4_2/src/UserArea/UFDiMuonsAnalyzer/test/TT_13TeV_Stage1.root","TT_13TeV_stageVar.root",false,false);
+  VariableAdder("/scratch/osg/bregnery/stage1/CMSSW_7_4_2/src/UserArea/UFDiMuonsAnalyzer/test/TT_13TeV_Stage1.root","TT_13TeV_stageVar.root",false,false);
 
   // This inputs the stage 1 ntuples on the UF Tier 2 cluster
   //VariableAdder("/raid/raid9/bregnery/13TeV/stage1/ggHmumu_13TeV_stage1.root","ggHmumu_13TeV_stageVar.root",false,false);
