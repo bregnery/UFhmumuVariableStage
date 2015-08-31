@@ -15,9 +15,9 @@ canvas = root.TCanvas()
 
 # Access Histograms
 vhmumuHist = vhmumu.Get("phiStarHist")
-vhmumuHist.SetName("butts")
+vhmumuHist.SetName("vHmumu")
 ttHist = tt.Get("phiStarHist")
-ttHist.SetName("butts2")
+ttHist.SetName("TT")
 
 # Create a 2D Histogram for more control
 xMin = 0
