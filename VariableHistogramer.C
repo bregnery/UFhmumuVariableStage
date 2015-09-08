@@ -62,6 +62,12 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   phiStarHist->SetStats(1);
   phiStarHist->Sumw2();
 
+  // Plot the Phi star cross check
+  TH1F* phiStarCheckHist = new TH1F("phiStarCheckHist","",50,0,1);
+  setHistTitles(phiStarCheckHist,"#phi *","Events");
+  phiStarCheckHist->SetStats(1);
+  phiStarHist->Sumw2();
+
   ////////////////////////////
   Double_t MASS_MUON = 0.105658367;    //GeV/c2
    
@@ -116,9 +122,11 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   _diJetInfo diJet;
   float VHphi;
   float phiStar;
+  float phiStarCheck;
   tree->SetBranchAddress("diJet",&diJet);
   tree->SetBranchAddress("VHphi",&VHphi);
   tree->SetBranchAddress("phiStar",&phiStar);
+  tree->SetBranchAddress("phiStarCheck",&phiStarCheck);
 
   // number of events
   unsigned nEvents = tree->GetEntries();
@@ -166,6 +174,7 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
     diJetMassHist->Fill(diJet.mass);
     VHphiHist->Fill(VHphi);
     phiStarHist->Fill(phiStar);
+    phiStarCheckHist->Fill(phiStarCheck);
 
   }
 
@@ -175,5 +184,6 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   diJetMassHist->Write();
   VHphiHist->Write();
   phiStarHist->Write();
+  phiStarCheckHist->Write();
   outFile->Close();
 }

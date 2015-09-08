@@ -34,12 +34,13 @@
 #include "Math/GSLMinimizer1D.h"
 
 //Begin main program
-void VariableAdder (TString inputFileName,TString outputFileName, bool isData, bool isSignal)
+void VariableAdder (TString inputFileName,TString outputFileName, bool isData, bool isSignal, bool isCrab)
 {
   using namespace std;
 
   ///////////////////////////
   Double_t MASS_MUON = 0.105658367;    //GeV/c2
+
  
   //////////////////////////
   // Tree Branches
@@ -48,14 +49,26 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
     cout << "isData\n";
   if (isSignal)
     cout << "isSignal\n";
+
   
-  TChain * tree = new TChain("tree");
-  tree->Add(inputFileName);
-  
+  // If the root file came from Andrew's crab script
+  // one additional step is needed
+  TChain * tree = nullptr;
+  if (isCrab){
+    tree = new TChain("dimuons/tree");
+    tree -> Add(inputFileName);
+  }
+  else {
+    tree = new TChain("tree");
+    tree -> Add(inputFileName);
+  }
+
+  std::cout << "Entries in the tree: " << tree -> GetEntries() << std::endl;
   
   // These are the names of the muons (See src/DataFormats.h for definitions!)
   _MuonInfo reco1, reco2;
-  
+
+  std::cout << "======== Setting Branch Address ========" << std::endl;
   tree->SetBranchAddress("reco1", &reco1);
   tree->SetBranchAddress("reco2", &reco2);
   
@@ -66,6 +79,10 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   tree->SetBranchAddress("recoCandPt",         &recoCandPt);
   tree->SetBranchAddress("recoCandY",          &recoCandY);
   tree->SetBranchAddress("recoCandPhi",        &recoCandPhi);
+
+  std::cout << "======== Branch Addresses Set! ========" << std::endl;
+
+  std::cout << "======== Checking truth info! ========" << std::endl;
 
   // MC truth info
   float trueMass=-99999.0;
@@ -88,14 +105,21 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   // the jet collection
   _PFJetInfo rawJets;
   tree->SetBranchAddress("pfJets",&rawJets);
+
+  std::cout << "======= Truth Info and Branch Addresses Set! ========" << std::endl;
   
   ///////////////////////////////
   ///////////////////////////////
   // Output file
+  std::cout << "======== Making Output File! :) ========" << std::endl;
+
   TFile* outFile = new TFile(outputFileName,"RECREATE");
+  std::cout << "======== Created Output File object ========" << std::endl;
   outFile->cd();
-  TTree* outTree = new TTree("outTree","outTree");
+  TTree* outTree = new TTree("outTree","RECREATE");
+  std::cout << "======== Created outTree object ========" << std::endl;
   outTree = tree->CloneTree();
+  std::cout << "======== Made Output File! ========" << std::endl;
   
   // Add a branch for diJet TLorentzVector
   _diJetInfo diJet;
@@ -109,6 +133,10 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   // Add a branch for the phiStar variable
   float phiStar;
   TBranch *phiStarBranch = outTree->Branch("phiStar", &phiStar, "phiStar/F");
+
+  // Add a branch for cross checking phiStar
+  float phiStarCheck;
+  TBranch *phiStarCheckBranch = outTree->Branch("phiStarCheck", &phiStarCheck, "phiStarCheck/F");
 
   // number of events
   unsigned nEvents = tree->GetEntries();
@@ -201,6 +229,14 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
        phiStar = TMath::Tan(phiACOP/2)*TMath::Sin(thetaStarEta);
        //cout << "phiStar: " << phiStar << endl;
        phiStarBranch->Fill();
+       
+       // phi star cross check
+       phiStarCheck = 0;
+       float tanDelPhi = TMath::Tan(phiACOP/2);
+       float delEta = TMath::Abs((reco1.eta - reco2.eta)/2);
+       float tanhDelEta = TMath::TanH(delEta);
+       phiStarCheck = tanDelPhi*(TMath::Sqrt(1 - (tanhDelEta*tanhDelEta)));
+       phiStarCheckBranch->Fill();
   }
   outTree->Write();
   outFile->Close();

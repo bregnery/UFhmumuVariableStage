@@ -24,6 +24,8 @@ axisHist.GetXaxis().SetTitle(xTitle)
 axisHist.GetYaxis().SetTitle("Events/Bin")
 axisHist.Draw()
 
+root.gStyle.SetOptStat(1111)
+
 phiStar.SetLineColor(1)
 phiStar.SetMarkerStyle(0)
 phiStar.SetLineStyle(1)
@@ -35,8 +37,17 @@ leg = root.TLegend(.2,.7,.4,.9,"MC sample")
 leg.AddEntry(phiStar,"#phi *","l")
 leg.AddEntry(phiStarCheck,"#phi * Check","l")
 
-phiStar.Draw("HIST same")
-phiStarCheck.Draw("HIST same")
+phiStar.Draw("SAMES")
+canvas.GetPad(0).Update()
+stats_vhmumu = phiStar.GetListOfFunctions().FindObject("stats").Clone("stats_vhmumu")
+
+y1 = stats_vhmumu.GetY1NDC()
+y2 = stats_vhmumu.GetY2NDC()
+
+stats_vhmumu.SetY1NDC(2 * y1 - y2)
+stats_vhmumu.SetY2NDC(y1)
+stats_vhmumu.Draw()
+phiStarCheck.Draw("SAMES")
 leg.Draw()
 
 canvas.SaveAs("Hist_phiStarCheck.png")
