@@ -22,15 +22,16 @@ vbfHist = vbf.Get("VHphiHist")
 gghHist = ggH.Get("VHphiHist")
 dyHist = dy.Get("VHphiHist")
 
-xMin = -4
-xMax = 7
+xMin = -2
+xMax = 4
 yMin = 0
-yMax = 15000
-xTitle = "#phi [radians]"
+yMax = 20000
+xTitle = "#Delta #phi [radians]"
 
-axisHist = root.TH2F("axisHist","",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","#Delta #phi",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
 axisHist.GetYaxis().SetTitle("Events/Bin")
+axisHist.GetYaxis().SetTitleOffset(1.7)
 axisHist.Draw()
 
 vhmumuHist.SetLineColor(1)

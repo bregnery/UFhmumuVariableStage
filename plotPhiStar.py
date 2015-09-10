@@ -30,11 +30,12 @@ xMin = 0
 xMax = 1
 yMin = 0
 yMax = 10000
-xTitle = "#phi *"
+xTitle = "#phi * [Radians]"
 
-axisHist = root.TH2F("axisHist","",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","#phi *",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
 axisHist.GetYaxis().SetTitle("Events/Bin")
+axisHist.GetYaxis().SetTitleOffset(1.7)
 axisHist.Draw()
 
 vhmumuHist.SetLineColor(1)
@@ -53,7 +54,7 @@ dyHist.SetLineColor(9)
 dyHist.SetMarkerStyle(0)
 dyHist.SetLineStyle(1)
 
-leg = root.TLegend(.2,.7,.4,.9,"MC sample")
+leg = root.TLegend(.7,.7,.9,.9,"MC sample")
 leg.AddEntry(vhmumuHist,"vhmumu","l")
 leg.AddEntry(ttHist,"TT","l")
 leg.AddEntry(vbfHist,"vbfHmumu","l")

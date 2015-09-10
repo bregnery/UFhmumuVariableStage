@@ -27,12 +27,13 @@ dyHist = dy.Get("diJetMassHist")
 xMin = 0
 xMax = 200
 yMin = 0
-yMax = 4000
+yMax = 2100
 xTitle = "2 Jet Mass [GeV/c^{2}]"
 
-axisHist = root.TH2F("axisHist","",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","DiJet Mass",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
-axisHist.GetYaxis().SetTitle("Events/Bin")
+axisHist.GetYaxis().SetTitle("Events/2 GeV")
+axisHist.GetYaxis().SetTitleOffset(1.7)
 axisHist.Draw()
 
 #root.gStyle.SetOptStat(1111)
@@ -53,7 +54,7 @@ dyHist.SetLineColor(9)
 dyHist.SetMarkerStyle(0)
 dyHist.SetLineStyle(1)
 
-leg = root.TLegend(.2,.7,.4,.9,"MC sample")
+leg = root.TLegend(.7,.7,.9,.9,"MC sample")
 leg.AddEntry(vhmumuHist,"vhmumu","l")
 leg.AddEntry(ttHist,"TT","l")
 leg.AddEntry(vbfHist,"vbfHmumu","l")
