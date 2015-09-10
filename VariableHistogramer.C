@@ -27,6 +27,9 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
 
   ///////////////////
   // Configuration
+
+  // Weighting for Drell Yan
+  float weight = 0.00001;
  
   ///////////////////////////
   // Output Histograms
@@ -170,12 +173,20 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
    
     /////////////////////
     // Fill Histograms
-    dimuonMassHist->Fill(recoCandMass);
-    diJetMassHist->Fill(diJet.mass);
-    VHphiHist->Fill(VHphi);
-    phiStarHist->Fill(phiStar);
-    phiStarCheckHist->Fill(phiStarCheck);
-
+    if(inputFileName = "DY_13TeV_stageVar.root"){
+       dimuonMassHist->Fill(recoCandMass,weight);
+       diJetMassHist->Fill(diJet.mass,weight);
+       VHphiHist->Fill(VHphi,weight);
+       phiStarHist->Fill(phiStar,weight);
+       phiStarCheckHist->Fill(phiStarCheck);
+    }
+    else{
+       dimuonMassHist->Fill(recoCandMass);
+       diJetMassHist->Fill(diJet.mass);
+       VHphiHist->Fill(VHphi);
+       phiStarHist->Fill(phiStar);
+       phiStarCheckHist->Fill(phiStarCheck);
+    }
   }
 
   TFile* outFile = new TFile(outputFileName,"RECREATE");

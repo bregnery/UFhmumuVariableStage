@@ -41,7 +41,6 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   ///////////////////////////
   Double_t MASS_MUON = 0.105658367;    //GeV/c2
 
- 
   //////////////////////////
   // Tree Branches
   cout << "Analyzing filename: "<< inputFileName.Data() << endl;
@@ -211,7 +210,10 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
           diJet.eta = diJetIn.Eta();
           diJet.pt = diJetIn.Pt();
           diJet.Et = diJetIn.Et();
-          VHphi = TMath::Abs(diJet.phi - recoCandPhi);     
+          VHphi = TMath::Abs(diJet.phi - recoCandPhi);
+          if(VHphi > TMath::Pi()){
+             VHphi = 2*TMath::Pi() - VHphi;
+          }     
        }
        diJetBranch->Fill();
        VHphiBranch->Fill();
