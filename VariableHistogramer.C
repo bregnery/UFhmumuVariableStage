@@ -21,7 +21,7 @@
 #include "Math/Functor.h"
 #include "Math/GSLMinimizer1D.h"
 
-void VariableHistogramer (TString inputFileName,TString outputFileName, bool isData, bool isSignal)
+void VariableHistogramer (TString inputFileName,TString outputFileName, bool isData, bool isSignal, bool isDY)
 {
   using namespace std;
 
@@ -29,24 +29,24 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   // Configuration
 
   // Weighting for Drell Yan
-  float weight = 0.00001;
- 
+  float weight = 0.03;
+
   ///////////////////////////
   // Output Histograms
-  
+      
   setStyle();
-  
+          
   // Plots Mass of the Dimuons
   TH1F* dimuonMassHist = new TH1F("dimuonMassHist","",50,110,160);
   setHistTitles(dimuonMassHist,"M(#mu#mu) [GeV/c^{2}]","Events");
   dimuonMassHist->Sumw2();
-  
+                    
   // Plots invariant Dijet Mass
   TH1F* diJetMassHist = new TH1F("diJetMassHist","",50,0,200);
   setHistTitles(diJetMassHist,"M(2Jet) [GeV/c^{2}]","Events");
   diJetMassHist->SetStats(1);
   diJetMassHist->Sumw2();
-
+  
   // Plots the diJet Eta
   TH1F* diJetEtaHist = new TH1F("diJetEtaHist","",50,-6,6);
   setHistTitles(diJetEtaHist,"#eta","Events");
@@ -70,6 +70,18 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   setHistTitles(phiStarCheckHist,"#phi *","Events");
   phiStarCheckHist->SetStats(1);
   phiStarHist->Sumw2();
+
+  // Plots the Zeppenfeld1 Variable
+  TH1F* Zeppenfeld1Hist = new TH1F("Zeppenfeld1Hist","",50,-6,6);
+  setHistTitles(Zeppenfeld1Hist,"eta_{1} *","Events");
+  Zeppenfeld1Hist->SetStats(1);
+  Zeppenfeld1Hist->Sumw2();
+
+  // Plots the Zeppenfeld2 Variable
+  TH1F* Zeppenfeld2Hist = new TH1F("Zeppenfeld2Hist","",50,-6,6);
+  setHistTitles(Zeppenfeld2Hist,"eta_{2} *","Events");
+  Zeppenfeld2Hist->SetStats(1);
+  Zeppenfeld2Hist->Sumw2();
 
   ////////////////////////////
   Double_t MASS_MUON = 0.105658367;    //GeV/c2
@@ -126,10 +138,14 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   float VHphi;
   float phiStar;
   float phiStarCheck;
+  float Zeppenfeld1;
+  float Zeppenfeld2;
   tree->SetBranchAddress("diJet",&diJet);
   tree->SetBranchAddress("VHphi",&VHphi);
   tree->SetBranchAddress("phiStar",&phiStar);
   tree->SetBranchAddress("phiStarCheck",&phiStarCheck);
+  tree->SetBranchAddress("Zeppenfeld1",&Zeppenfeld1);
+  tree->SetBranchAddress("Zeppenfeld2",&Zeppenfeld2);
 
   // number of events
   unsigned nEvents = tree->GetEntries();
@@ -173,12 +189,14 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
    
     /////////////////////
     // Fill Histograms
-    if(inputFileName = "DY_13TeV_stageVar.root"){
+    if(isDY){
        dimuonMassHist->Fill(recoCandMass,weight);
        diJetMassHist->Fill(diJet.mass,weight);
        VHphiHist->Fill(VHphi,weight);
        phiStarHist->Fill(phiStar,weight);
        phiStarCheckHist->Fill(phiStarCheck);
+       Zeppenfeld1Hist->Fill(Zeppenfeld1,weight);
+       Zeppenfeld2Hist->Fill(Zeppenfeld2,weight);
     }
     else{
        dimuonMassHist->Fill(recoCandMass);
@@ -186,6 +204,8 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
        VHphiHist->Fill(VHphi);
        phiStarHist->Fill(phiStar);
        phiStarCheckHist->Fill(phiStarCheck);
+       Zeppenfeld1Hist->Fill(Zeppenfeld1);
+       Zeppenfeld2Hist->Fill(Zeppenfeld2);
     }
   }
 
@@ -196,5 +216,7 @@ void VariableHistogramer (TString inputFileName,TString outputFileName, bool isD
   VHphiHist->Write();
   phiStarHist->Write();
   phiStarCheckHist->Write();
+  Zeppenfeld1Hist->Write();
+  Zeppenfeld2Hist->Write();
   outFile->Close();
 }

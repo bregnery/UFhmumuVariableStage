@@ -11,26 +11,28 @@ vbf = root.TFile("VBFHmumu_13TeV_Hist.root")
 ggH = root.TFile("ggHmumu_13TeV_Hist.root")
 tt = root.TFile("TT_13TeV_Hist.root")
 dy = root.TFile("DY_13TeV_Hist.root")
+ttH = root.TFile("ttHmumu_13TeV_Hist.root")
 
 canvas = root.TCanvas()
 
 #Set name is for the stat boxes
-vhmumuHist = vhmumu.Get("diJetMassHist")
+vhmumuHist = vhmumu.Get("Zeppenfeld1Hist")
 vhmumuHist.SetName("vHmumu")
-ttHist = tt.Get("diJetMassHist")
+ttHist = tt.Get("Zeppenfeld1Hist")
 ttHist.SetName("TT")
 
-vbfHist = vbf.Get("diJetMassHist")
-gghHist = ggH.Get("diJetMassHist")
-dyHist = dy.Get("diJetMassHist")
+vbfHist = vbf.Get("Zeppenfeld1Hist")
+gghHist = ggH.Get("Zeppenfeld1Hist")
+dyHist = dy.Get("Zeppenfeld1Hist")
+tthHist = ttH.Get("Zeppenfeld1Hist")
 
-xMin = 0
-xMax = 200
+xMin = -6
+xMax = 6
 yMin = 0
 yMax = 2100
-xTitle = "2 Jet Mass [GeV/c^{2}]"
+xTitle = "#eta_{1} *"
 
-axisHist = root.TH2F("axisHist","DiJet Mass",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","Zeppenfeld 1",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
 axisHist.GetYaxis().SetTitle("Events/2 GeV")
 axisHist.GetYaxis().SetTitleOffset(1.7)
@@ -50,9 +52,12 @@ vbfHist.SetLineStyle(1)
 gghHist.SetLineColor(4)
 gghHist.SetMarkerStyle(0)
 gghHist.SetLineStyle(1)
-dyHist.SetLineColor(9)
+dyHist.SetLineColor(52)
 dyHist.SetMarkerStyle(0)
 dyHist.SetLineStyle(1)
+tthHist.SetLineColor(7)
+tthHist.SetMarkerStyle(0)
+tthHist.SetLineStyle(1)
 
 leg = root.TLegend(.7,.7,.9,.9,"MC sample")
 leg.AddEntry(vhmumuHist,"vhmumu","l")
@@ -60,6 +65,7 @@ leg.AddEntry(ttHist,"TT","l")
 leg.AddEntry(vbfHist,"vbfHmumu","l")
 leg.AddEntry(gghHist,"ggHmumu","l")
 leg.AddEntry(dyHist,"DY","l")
+leg.AddEntry(tthHist,"ttHmumu","l")
 
 vhmumuHist.Draw("SAMES")
 #canvas.GetPad(0).Update()
@@ -75,7 +81,8 @@ ttHist.Draw("SAMES")
 vbfHist.Draw("SAMES")
 gghHist.Draw("SAMES")
 dyHist.Draw("SAMES")
+tthHist.Draw("SAMES")
 leg.Draw()
 
-canvas.SaveAs("Hist_diJetMass.png")
+canvas.SaveAs("Hist_Zeppenfeld1.png")
 

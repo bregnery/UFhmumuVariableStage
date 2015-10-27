@@ -7,34 +7,38 @@ from src.helpers import *
 root.gROOT.SetBatch(True)
 
 vhmumu = root.TFile("VHmumu_13TeV_Hist.root")
-tt = root.TFile("TT_13TeV_Hist.root")
 vbf = root.TFile("VBFHmumu_13TeV_Hist.root")
 ggH = root.TFile("ggHmumu_13TeV_Hist.root")
+tt = root.TFile("TT_13TeV_Hist.root")
 dy = root.TFile("DY_13TeV_Hist.root")
 ttH = root.TFile("ttHmumu_13TeV_Hist.root")
 
 canvas = root.TCanvas()
 
-vhmumuHist = vhmumu.Get("VHphiHist")
+#Set name is for the stat boxes
+vhmumuHist = vhmumu.Get("Zeppenfeld1Hist")
 vhmumuHist.SetName("vHmumu")
-ttHist = tt.Get("VHphiHist")
+ttHist = tt.Get("Zeppenfeld1Hist")
 ttHist.SetName("TT")
-vbfHist = vbf.Get("VHphiHist")
-gghHist = ggH.Get("VHphiHist")
-dyHist = dy.Get("VHphiHist")
-tthHist = ttH.Get("VHphiHist")
 
-xMin = -2
-xMax = 4
+vbfHist = vbf.Get("Zeppenfeld1Hist")
+gghHist = ggH.Get("Zeppenfeld1Hist")
+dyHist = dy.Get("Zeppenfeld1Hist")
+tthHist = ttH.Get("Zeppenfeld1Hist")
+
+xMin = -6
+xMax = 6
 yMin = 0
-yMax = 20000
-xTitle = "#Delta #phi [radians]"
+yMax = 25000
+xTitle = "#eta_{1} *"
 
-axisHist = root.TH2F("axisHist","#Delta #phi",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","Zeppenfeld 1",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
-axisHist.GetYaxis().SetTitle("Events/Bin")
+axisHist.GetYaxis().SetTitle("Events/2 GeV")
 axisHist.GetYaxis().SetTitleOffset(1.7)
 axisHist.Draw()
+
+#root.gStyle.SetOptStat(1111)
 
 vhmumuHist.SetLineColor(1)
 vhmumuHist.SetMarkerStyle(0)
@@ -55,7 +59,7 @@ tthHist.SetLineColor(7)
 tthHist.SetMarkerStyle(0)
 tthHist.SetLineStyle(1)
 
-leg = root.TLegend(.2,.7,.4,.9,"MC sample")
+leg = root.TLegend(.7,.7,.9,.9,"MC sample")
 leg.AddEntry(vhmumuHist,"vhmumu","l")
 leg.AddEntry(ttHist,"TT","l")
 leg.AddEntry(vbfHist,"vbfHmumu","l")
@@ -63,7 +67,7 @@ leg.AddEntry(gghHist,"ggHmumu","l")
 leg.AddEntry(dyHist,"DY","l")
 leg.AddEntry(tthHist,"ttHmumu","l")
 
-vhmumuHist.Draw("SAMES")
+vhmumuHist.Draw("Hist SAME")
 #canvas.GetPad(0).Update()
 #stats_vhmumu = vhmumuHist.GetListOfFunctions().FindObject("stats").Clone("stats_vhmumu")
 
@@ -73,12 +77,12 @@ vhmumuHist.Draw("SAMES")
 #stats_vhmumu.SetY1NDC(2 * y1 - y2)
 #stats_vhmumu.SetY2NDC(y1)
 #stats_vhmumu.Draw()
-ttHist.Draw("SAMES")
-vbfHist.Draw("SAMES")
-gghHist.Draw("SAMES")
-dyHist.Draw("SAMES")
-tthHist.Draw("SAMES")
+ttHist.Draw("Hist SAME")
+vbfHist.Draw("Hist SAME")
+gghHist.Draw("Hist SAME")
+dyHist.Draw("Hist SAME")
+tthHist.Draw("Hist SAME")
 leg.Draw()
 
+canvas.SaveAs("Hist_Zeppenfeld1.png")
 
-canvas.SaveAs("Hist_VHphi.png")

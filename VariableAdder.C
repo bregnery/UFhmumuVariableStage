@@ -137,6 +137,12 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
   float phiStarCheck;
   TBranch *phiStarCheckBranch = outTree->Branch("phiStarCheck", &phiStarCheck, "phiStarCheck/F");
 
+  // Add branchs for the Zeppenfeld variables
+  float Zeppenfeld1 = 0;
+  TBranch *Zeppenfeld1Branch = outTree->Branch("Zeppenfeld1", &Zeppenfeld1, "Zeppenfeld1/F");
+  float Zeppenfeld2 = 0;
+  TBranch *Zeppenfeld2Branch = outTree->Branch("Zeppenfeld2", &Zeppenfeld2, "Zeppenfeld2/F");  
+
   // number of events
   unsigned nEvents = tree->GetEntries();
   unsigned reportEach = 100000;
@@ -217,6 +223,16 @@ void VariableAdder (TString inputFileName,TString outputFileName, bool isData, b
        }
        diJetBranch->Fill();
        VHphiBranch->Fill();
+
+       // calculate and fill the Zeppenfeld Variable
+       if(jets.size() >= 2){
+          double meanEta = (jets[index1].Eta()+jets[index2].Eta())/2;
+          Zeppenfeld1 = jets[index1].Eta()-meanEta;
+          Zeppenfeld2 = jets[index2].Eta()-meanEta;
+       }
+       Zeppenfeld1Branch->Fill();
+       Zeppenfeld2Branch->Fill();
+
        // calculate and fill the phiStar variable
        phiStar = 0;
        float muonDelPhi = TMath::Abs(reco1.phi - reco2.phi);
