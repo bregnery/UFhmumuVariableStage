@@ -16,23 +16,23 @@ ttH = root.TFile("ttHmumu_13TeV_Hist.root")
 canvas = root.TCanvas()
 
 #Set name is for the stat boxes
-vhmumuHist = vhmumu.Get("Zeppenfeld1Hist")
+vhmumuHist = vhmumu.Get("diJetMassHist")
 vhmumuHist.SetName("vHmumu")
-ttHist = tt.Get("Zeppenfeld1Hist")
+ttHist = tt.Get("diJetMassHist")
 ttHist.SetName("TT")
 
-vbfHist = vbf.Get("Zeppenfeld1Hist")
-gghHist = ggH.Get("Zeppenfeld1Hist")
-dyHist = dy.Get("Zeppenfeld1Hist")
-tthHist = ttH.Get("Zeppenfeld1Hist")
+vbfHist = vbf.Get("diJetMassHist")
+gghHist = ggH.Get("diJetMassHist")
+dyHist = dy.Get("diJetMassHist")
+tthHist = ttH.Get("diJetMassHist")
 
-xMin = -6
-xMax = 6
+xMin = 0
+xMax = 200
 yMin = 0
 yMax = 2100
-xTitle = "#eta_{1} *"
+xTitle = "2 Jet Mass [GeV/c^{2}]"
 
-axisHist = root.TH2F("axisHist","Zeppenfeld 1",1,xMin,xMax,1,yMin,yMax)
+axisHist = root.TH2F("axisHist","DiJet Mass",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
 axisHist.GetYaxis().SetTitle("Events/2 GeV")
 axisHist.GetYaxis().SetTitleOffset(1.7)
@@ -84,5 +84,5 @@ dyHist.Draw("SAMES")
 tthHist.Draw("SAMES")
 leg.Draw()
 
-canvas.SaveAs("Hist_Zeppenfeld1.png")
+canvas.SaveAs("Hist_diJetMass.png")
 

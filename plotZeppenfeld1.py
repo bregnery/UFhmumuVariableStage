@@ -34,7 +34,7 @@ xTitle = "#eta_{1} *"
 
 axisHist = root.TH2F("axisHist","Zeppenfeld 1",1,xMin,xMax,1,yMin,yMax)
 axisHist.GetXaxis().SetTitle(xTitle)
-axisHist.GetYaxis().SetTitle("Events/2 GeV")
+axisHist.GetYaxis().SetTitle("Events")
 axisHist.GetYaxis().SetTitleOffset(1.7)
 axisHist.Draw()
 
